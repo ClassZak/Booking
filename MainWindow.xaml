@@ -1,0 +1,195 @@
+﻿<!-- Views/MainWindow.xaml -->
+<Window x:Class="Booking.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:exWPF="http://schemas.xceed.com/wpf/xaml/toolkit"
+		mc:Ignorable="d"
+		MinHeight="550"
+		MinWidth="800"
+		MaxHeight="550"
+		MaxWidth="800"
+		ResizeMode="CanMinimize"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		Title="Hotel Booking" Height="550" Width="800" Icon="/BookingIcon.png"
+        Background="AliceBlue"
+        >
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="320"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<TextBlock
+            Text="Бронирование отелей на территории подвала МГГТК АГУ"
+            FontSize="24"
+            FontWeight="Bold"
+            Foreground="CadetBlue"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Grid.ColumnSpan="2"
+            />
+
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+
+
+            <TextBlock Text="Имя клиента"
+				Grid.Row="0"
+				/>
+            <TextBlock
+				Text="Фамилия клиента"
+				Grid.Row="1"
+				/>
+            <TextBlock
+				Text="Отчество Клиента"
+				Grid.Row="2"
+				/>
+            <TextBlock
+				Text="Дата въезда"
+				Grid.Row="3"
+				/>
+            <TextBlock
+				Text="Дата выезда"
+				Grid.Row="4"
+				/>
+            <TextBlock
+				Text="Стоимость для одного на 1 день"
+				Grid.Row="5"
+				/>
+            <TextBlock
+				Text="Количество комнат"
+				Grid.Row="6"
+				/>
+            <TextBlock
+				Text="Количество свободных комнат"
+				Grid.Row="7"
+				/>
+            <TextBlock
+				Text="Количество людей"
+				Grid.Row="8"
+				/>
+            <TextBlock
+				Text="Итоговая сумма"
+				Grid.Row="9"
+				/>
+
+
+
+
+            <TextBox
+				Name="GuestNameBox"
+				Grid.Column="1"
+				Grid.Row="0"
+                Background="AliceBlue"
+				/>
+            <TextBox
+				Name="GuestSurnameBox"
+				Grid.Column="1"
+				Grid.Row="1"
+                Background="AliceBlue"
+				/>
+            <TextBox
+				Name="FatherName"
+				Grid.Column="1"
+				Grid.Row="2"
+                Background="AliceBlue"
+				/>
+
+            <DatePicker
+				Name="CheckInDatePicker"
+				Grid.Column="1"
+				Grid.Row="3"
+				DisplayDateStart="{x:Static sys:DateTime.Today}"
+                Background="AliceBlue"
+				/>
+            <DatePicker
+				Name="CheckOutDatePicker"
+				Grid.Column="1"
+				Grid.Row="4"
+				DisplayDateStart="{x:Static sys:DateTime.Today}"
+                Background="AliceBlue"
+				/>
+            <TextBox
+                Name="PriceTextBox"
+				Grid.Column="1"
+				Grid.Row="5"
+                IsReadOnly="True"
+                Background="AliceBlue"
+                />
+            <TextBox
+                x:Name="RoomCountTexBox"
+                IsReadOnly="True"
+                Grid.Column="1"
+                Grid.Row="6"
+                Background="AliceBlue"
+                />
+            <TextBox
+                Name="EmptyRoomsTextBox"
+				Grid.Column="1"
+				Grid.Row="7"
+                IsReadOnly="True"
+                Background="AliceBlue"
+                />
+            <exWPF:IntegerUpDown
+				x:Name="NumberOfPeopleTextBox"
+				Grid.Column="1"
+				Grid.Row="8"
+                KeyDown="NumberOfPeopleTextBox_KeyDown"
+                ValueChanged="NumberOfPeopleTextBox_ValueChanged"
+                Background="AliceBlue"
+                Text="1"
+				/>
+            <TextBox
+				x:Name="TotalAmountTextBox"
+				Grid.Column="1"
+				Grid.Row="9"
+                Background="AliceBlue"
+                IsReadOnly="True"
+				/>
+			
+            <Button
+				Content="Забронировать"
+				Grid.Column="0"
+				Grid.ColumnSpan="2"
+				Grid.Row="10"
+				FontSize="14"
+				FontWeight="Bold"
+				Margin="10"
+				/>
+        </Grid>
+        <StackPanel Grid.Row="1" Orientation="Vertical" Grid.RowSpan="2">
+			<ComboBox Name="HotelComboBox" SelectionChanged="HotelComboBox_SelectionChanged"/>
+			<Image Source="/HotelImages/Army.jpg" Height="280" Stretch="Fill" Name="HotelImage"/>
+			<TextBox
+                Background="AliceBlue"
+                Name="HotelDescription"
+                Text="Армейский Отель &quot;Тривагона. Мечта невального&quot;"
+                TextWrapping="Wrap"
+                Height="150"
+                IsReadOnly="True"
+                VerticalScrollBarVisibility="Auto"/>
+		</StackPanel>
+	</Grid>
+</Window>

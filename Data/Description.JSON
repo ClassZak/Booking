@@ -1,0 +1,16 @@
+{
+	"DescriptionPaths":
+	[
+		"Data\\HotelDescriptions\\ArmyHotel.JSON",
+		"Data\\HotelDescriptions\\Hans Brinker Hotel Amsterdam.JSON",
+		"Data\\HotelDescriptions\\Hole.JSON",
+		"Data\\HotelDescriptions\\Homeless.JSON",
+		"Data\\HotelDescriptions\\Hustler.JSON",
+		"Data\\HotelDescriptions\\Minecraft.JSON",
+		"Data\\HotelDescriptions\\Play Hotel.JSON",
+		"Data\\HotelDescriptions\\Prison.JSON",
+		"Data\\HotelDescriptions\\Pushka Inn Hotel.JSON",
+		"Data\\HotelDescriptions\\Russian School.JSON",
+		"Data\\HotelDescriptions\\VIP.JSON"
+	]
+}
