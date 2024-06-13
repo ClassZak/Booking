@@ -122,6 +122,8 @@
 				Grid.Column="1"
 				Grid.Row="3"
 				DisplayDateStart="{x:Static sys:DateTime.Today}"
+                SelectedDate="{x:Static sys:DateTime.Today}"
+                SelectedDateChanged="CheckInDatePicker_SelectedDateChanged"
                 Background="AliceBlue"
 				/>
             <DatePicker
@@ -129,6 +131,8 @@
 				Grid.Column="1"
 				Grid.Row="4"
 				DisplayDateStart="{x:Static sys:DateTime.Today}"
+                SelectedDate="{x:Static sys:DateTime.Today}"
+                SelectedDateChanged="CheckOutDatePicker_SelectedDateChanged"
                 Background="AliceBlue"
 				/>
             <TextBox
@@ -159,7 +163,7 @@
                 KeyDown="NumberOfPeopleTextBox_KeyDown"
                 ValueChanged="NumberOfPeopleTextBox_ValueChanged"
                 Background="AliceBlue"
-                Text="1"
+                Text="1" Height="20" VerticalAlignment="Top"
 				/>
             <TextBox
 				x:Name="TotalAmountTextBox"
@@ -176,7 +180,7 @@
 				Grid.Row="10"
 				FontSize="14"
 				FontWeight="Bold"
-				Margin="10"
+				Margin="10" Click="Booking_Click"
 				/>
         </Grid>
         <StackPanel Grid.Row="1" Orientation="Vertical" Grid.RowSpan="2">
