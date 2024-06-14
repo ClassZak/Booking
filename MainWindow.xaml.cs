@@ -26,6 +26,7 @@ namespace Booking
         public ClientBookingInfo ClientBookingInfo = new ClientBookingInfo();
         public DescriptionPathsContainer PathsContainer = new DescriptionPathsContainer();
 		public List<HotelInfo> hotelInfos = new List<HotelInfo>();
+		bool bookingStarted = false;
 
 		public MainWindow()
 		{
@@ -37,7 +38,8 @@ namespace Booking
 			LoadHotelsInfo();
 			SetInfoComboBoxList();
 			HotelComboBox.SelectedIndex = 0;
-			SaveAllBookedRooms();
+			//SaveAllBookedRooms();
+			UpdateEmptyRoomsCount();
         }
 
 
@@ -238,14 +240,7 @@ namespace Booking
                     (
                         new FileStream
                         (
-                            System.IO.Path.Combine
-                            (
-                                Directory.GetCurrentDirectory(),
-                                "Data",
-                                "Booked hotel rooms",
-                                "ClientsRooms",
-                                file+".JSON"
-                            ),
+                            file,
                             FileMode.Open,
                             FileAccess.Read
                         )
@@ -262,62 +257,80 @@ namespace Booking
 							x =>
 							x.HotelName == hotelName &&
 							x.Number == i &&
-							!(
+							(
 								tIn <= x.DateTimeIn &&
 								x.DateTimeIn <= tOut
 							)
 						) is null))
 					)
+					{
 						addItem = false;
+						break;
+					}
                 }
 				if (addItem)
 					++res;
 				addItem = true;
             }
-			return (uint)lastNumber-res-1;
+			return res;
         }
 
 		private async void Booking_Click(object sender, RoutedEventArgs e)
 		{
-			if (GuestNameBox.Text is null || GuestNameBox.Text == "")
+			if(bookingStarted)
+			{
+				MessageBox.Show("Процесс бронирования номеров запущен", "Операция выполняется", MessageBoxButton.OK, MessageBoxImage.Information);
+				return;
+			}
+			bookingStarted = true;
+
+
+            if (GuestNameBox.Text is null || GuestNameBox.Text == "")
 			{
 				MessageBox.Show("Пожалуйста введите имя.", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
-				return;
+				bookingStarted = false;
+                return;
 			}
 
 
 			if (GuestSurnameBox.Text is null || GuestSurnameBox.Text == "")
 			{
 				MessageBox.Show("Пожалуйста введите фамилию.", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
-				return;
+                bookingStarted = false;
+                return;
 			}
 
 			if (FatherName.Text is null || FatherName.Text == "")
 			{
 				MessageBox.Show("Пожалуйста введите отчество.", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
-				return;
+                bookingStarted = false;
+                return;
 			}
 
 
 			if (CheckInDatePicker.Text == "" || CheckInDatePicker.SelectedDate < DateTime.Today.Date)
 			{
 				MessageBox.Show("Пожалуйста введите дату въезда.", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
-				return;
+                bookingStarted = false;
+                return;
 			}
 
 			if (CheckOutDatePicker.Text == "")
 			{
 				MessageBox.Show("Пожалуйста введите дату выезда.", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
-				return;
+                bookingStarted = false;
+                return;
 			}
 			if (NumberOfPeopleTextBox.Text == "" || NumberOfPeopleTextBox.Text is null)
 			{
 				MessageBox.Show("Пожалуйста введите количество людей.", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
-				return;
+                bookingStarted = false;
+                return;
 			}
             if (CheckOutDatePicker.Text == "" || CheckOutDatePicker.SelectedDate < CheckInDatePicker.SelectedDate)
             {
                 MessageBox.Show("Пожалуйста введите корректную дату выезда.", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
+                bookingStarted = false;
                 return;
             }
 
@@ -332,7 +345,15 @@ namespace Booking
 						UpdateEmptyRoomsCount();
 
 
-						if (uint.Parse(EmptyRoomsTextBox.Text)< uint.Parse(NumberOfPeopleTextBox.Text))
+						uint emptyPlaces=0, _toSell=0;
+						Dispatcher.Invoke(() =>
+						{
+							emptyPlaces = uint.Parse(EmptyRoomsTextBox.Text);
+							_toSell = uint.Parse(NumberOfPeopleTextBox.Text);
+
+                        });
+
+						if (emptyPlaces < _toSell)
 						{
 							MessageBox.Show
 							(
@@ -349,29 +370,52 @@ namespace Booking
 					}
 				}
 
-				ClientBookingInfo.Client = new
-				Client
-				(
-					GuestNameBox.Text,
-					GuestSurnameBox.Text,
-					FatherName.Text
-				);
+				ClientBookingInfo.Client = new Client();
+
+				Dispatcher.Invoke(() =>
+				{
+					ClientBookingInfo.Client.Name = GuestNameBox.Text;
+					ClientBookingInfo.Client.Surname = GuestSurnameBox.Text;
+					ClientBookingInfo.Client.FatherName = FatherName.Text;
+
+                });
 				ClientBookingInfo.BookedRooms = new List<BookedRoom>();
-				BookedRoom bookedRoom1 = new BookedRoom
+
+				string IndexName="";
+				DateTime dateTimeIn=DateTime.Now;
+				DateTime dateTimeOut = DateTime.Now;
+				float Price=0.0f;
+				Dispatcher.Invoke(() =>
+				{
+					IndexName = hotelInfos[HotelComboBox.SelectedIndex].IndexName;
+					dateTimeIn = (DateTime)CheckInDatePicker.SelectedDate;
+					dateTimeOut = (DateTime)CheckOutDatePicker.SelectedDate;
+					Price = hotelInfos[HotelComboBox.SelectedIndex].Price;
+                });
+
+                BookedRoom bookedRoom1 = new BookedRoom
 				(
-                    hotelInfos[HotelComboBox.SelectedIndex].IndexName,
+                    IndexName,
 					1,
-					(DateTime)CheckInDatePicker.SelectedDate,
-					(DateTime)CheckOutDatePicker.SelectedDate,
-					hotelInfos[HotelComboBox.SelectedIndex].Price
+                    dateTimeIn,
+                    dateTimeOut,
+                    Price
                 );
 
 
 
+                uint lastNumber=0, toSell = 0;
+				Dispatcher.Invoke(() =>
+				{
+                    lastNumber=hotelInfos[HotelComboBox.SelectedIndex].Rooms + 1;
+					toSell = uint.Parse(NumberOfPeopleTextBox.Text);
+				});
+
+				int sellI = 1;
                 for
 				(
 					bookedRoom1.Number = 1;
-					bookedRoom1.Number != hotelInfos[HotelComboBox.SelectedIndex].Rooms+1;
+					bookedRoom1.Number != lastNumber && sellI != toSell+1;
 					++bookedRoom1.Number
 				)
 				{
@@ -396,19 +440,12 @@ namespace Booking
 						(
 							new FileStream
 							(
-								System.IO.Path.Combine
-								(
-									Directory.GetCurrentDirectory(),
-									"Data",
-									"Booked hotel rooms",
-									"ClientsRooms",
-									file
-								),
+								file,
 								FileMode.Open,
 								FileAccess.Read
 							)
 						);
-                        ClientBookingInfo bookedRoom = JsonSerializer.Deserialize<ClientBookingInfo>(file);
+                        ClientBookingInfo bookedRoom = JsonSerializer.Deserialize<ClientBookingInfo>(streamReader.ReadToEnd());
 						streamReader.Close();
 
 
@@ -419,9 +456,9 @@ namespace Booking
 								x=>x.Number== bookedRoom1.Number &&
 								x.HotelName == bookedRoom1.HotelName
 								&& 
-								!(
+								(
 									x.DateTimeIn<= bookedRoom1.DateTimeIn &&
-									x.DateTimeIn<=bookedRoom1.DateTimeOut
+									x.DateTimeIn<= bookedRoom1.DateTimeOut
 								)
 							) is null)
 						)
@@ -431,17 +468,32 @@ namespace Booking
 						}
                     }
 					if(emptyRoom)
+					{
 						ClientBookingInfo.BookedRooms.Add(new BookedRoom(bookedRoom1));
+						++sellI;
+					}
                 }
-				
-				MessageBox.Show
-				(
-					"Ваши данные были записаны.\n"+
-					$"Номера в отель \"{hotelInfos[HotelComboBox.SelectedIndex].Name}\" забронированны",
-					"Бронирование",
-					MessageBoxButton.OK,
-					MessageBoxImage.Information
-				);
+				ClientBookingInfo.UpdateTotalAmount();
+
+                ClientBookingInfo.SaveToFile();
+
+				UpdateEmptyRoomsCount();
+
+                Dispatcher.Invoke(() =>
+				{
+					MessageBox.Show
+					(
+						"Ваши данные были записаны.\n"+
+						$"Номера в отель \"{hotelInfos[HotelComboBox.SelectedIndex].Name}\" забронированны\n"+
+						$"К оплате:{ClientBookingInfo.TotalAmount}"
+                        ,
+						"Бронирование",
+						MessageBoxButton.OK,
+						MessageBoxImage.Information
+					);
+
+					bookingStarted = false;
+                });
 			});
         }
 
@@ -467,7 +519,7 @@ namespace Booking
                 {
                     tIn = CheckInDatePicker.SelectedDate;
                     tOut = CheckOutDatePicker.SelectedDate;
-                    file = (string)HotelComboBox.SelectedValue;
+                    file = hotelInfos[HotelComboBox.SelectedIndex].IndexName;
                 });
 
 
@@ -476,6 +528,7 @@ namespace Booking
                 Dispatcher.Invoke(() =>
                 {
                     EmptyRoomsTextBox.Text = res.ToString();
+                    NumberOfPeopleTextBox.Maximum = (int?)res;
                 });
             });
         }
@@ -489,7 +542,7 @@ namespace Booking
             {
                 tIn = CheckInDatePicker.SelectedDate;
                 tOut = CheckOutDatePicker.SelectedDate;
-                file = (string)HotelComboBox.SelectedValue;
+                file = hotelInfos[HotelComboBox.SelectedIndex].IndexName;
             });
 
 
@@ -498,6 +551,7 @@ namespace Booking
             Dispatcher.Invoke(() =>
             {
                 EmptyRoomsTextBox.Text = res.ToString();
+				NumberOfPeopleTextBox.Maximum = (int?)res;
             });
         }
     }

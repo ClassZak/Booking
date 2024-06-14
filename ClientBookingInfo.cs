@@ -21,16 +21,21 @@ namespace Booking
 			Client = client;
 			this.BookedRooms = bookedRooms;
 
-
-			TotalAmount= 0;
-
-			foreach(BookedRoom client1 in bookedRooms)
-				TotalAmount += client1.Price;
-		}
+			UpdateTotalAmount();
+        }
 		public string GetFileName()
 		{
-			return $"{DateTime.Now} {Client.Name} {Client.Surname} {Client.FatherName}";
+			string res = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.{DateTime.Now.Millisecond} {Client.Name} {Client.Surname} {Client.FatherName}.JSON";
+
+			return res;
 		}
+		public void UpdateTotalAmount()
+		{
+            TotalAmount = 0;
+
+            foreach (BookedRoom client1 in BookedRooms)
+                TotalAmount += client1.Price;
+        }
 
 		public void SaveToFile()
 		{
@@ -45,14 +50,14 @@ namespace Booking
 						"Data",
 						"Booked hotel rooms",
 						"ClientsRooms",
-                        GetFileName()+".JSON"
+                        GetFileName()
                     ),
 					FileMode.Create,
 					FileAccess.Write
 				)
 			);
 
-			streamWriter.Write(JsonSerializer.Serialize (BookedRooms));
+			streamWriter.Write(JsonSerializer.Serialize (this));
             streamWriter.Close();
         }
 	}
