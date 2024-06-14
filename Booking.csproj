@@ -80,12 +80,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BookedRoom.cs" />
-    <Compile Include="BookedRooms.cs" />
-    <Compile Include="Client.cs" />
-    <Compile Include="ClientBookingInfo.cs" />
-    <Compile Include="DescriptionPathsContainer.cs" />
-    <Compile Include="HotelInfo.cs" />
+    <Compile Include="Booking Data\Rooms\BookedRoom.cs" />
+    <Compile Include="Booking Data\Client\Client.cs" />
+    <Compile Include="Booking Data\Client\ClientBookingInfo.cs" />
+    <Compile Include="HotelData\DescriptionPathsContainer.cs" />
+    <Compile Include="HotelData\HotelInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

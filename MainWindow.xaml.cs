@@ -38,7 +38,6 @@ namespace Booking
 			LoadHotelsInfo();
 			SetInfoComboBoxList();
 			HotelComboBox.SelectedIndex = 0;
-			//SaveAllBookedRooms();
 			UpdateEmptyRoomsCount();
         }
 
@@ -171,34 +170,6 @@ namespace Booking
 			catch
 			{
 			}
-		}
-		private async void SaveAllBookedRooms()
-		{
-			await Task.Run(() =>
-			{
-				for (int i = 0; i < hotelInfos.Count; ++i)
-				{
-					SaveBookedRooms
-					(System.IO.Path.Combine(Directory.GetCurrentDirectory(),"Data", "Booked hotel rooms", hotelInfos[i].IndexName+".JSON"), hotelInfos[i]);
-                }
-			});
-		}
-		private async void SaveBookedRooms(string path, HotelInfo hotelInfo)
-		{
-			await Task.Run(() =>
-			{
-				if (!File.Exists(path))
-				{
-					BookedRooms bookedRooms =
-					new BookedRooms(hotelInfo.Name, new List<BookedRoom>(), hotelInfo.Rooms, hotelInfo.Rooms);
-
-					StreamWriter streamWriter =
-					new StreamWriter(new FileStream(path, FileMode.Create,FileAccess.Write));
-                    streamWriter.Write(JsonSerializer.Serialize(bookedRooms, typeof(BookedRooms)));
-
-					streamWriter.Close();
-				}
-			});
 		}
 
 
