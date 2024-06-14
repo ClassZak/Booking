@@ -525,5 +525,11 @@ namespace Booking
 				NumberOfPeopleTextBox.Maximum = (int?)res;
             });
         }
+
+        private void GuestNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+			if (e.Text.Any(x => !(x >= 'a' && x <= 'z' || x >= 'A' && x <= 'Z' || x >= 'а' && x <= 'я' || x >= 'А' && x <= 'Я' || x == '\'' || x == '-' || x == ' ')))
+				e.Handled = true;
+        }
     }
 }

@@ -103,18 +103,21 @@
 				Grid.Column="1"
 				Grid.Row="0"
                 Background="AliceBlue"
+                PreviewTextInput="GuestNameBox_PreviewTextInput"
 				/>
             <TextBox
 				Name="GuestSurnameBox"
 				Grid.Column="1"
 				Grid.Row="1"
                 Background="AliceBlue"
+                PreviewTextInput="GuestNameBox_PreviewTextInput"
 				/>
             <TextBox
 				Name="FatherName"
 				Grid.Column="1"
 				Grid.Row="2"
                 Background="AliceBlue"
+                PreviewTextInput="GuestNameBox_PreviewTextInput"
 				/>
 
             <DatePicker
